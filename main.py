@@ -1,9 +1,18 @@
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 from smolagents import CodeAgent, DuckDuckGoSearchTool, LiteLLMModel
 import os
 
-# Initialize FastAPI app
 app = FastAPI()
+
+# Enable CORS - you can adjust allow_origins to restrict to specific domains
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins. Change this for production.
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Get the Gemini API key from the environment variable
 gemini_api_key = os.environ.get("GEMINI_API_KEY")
