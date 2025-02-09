@@ -30,11 +30,32 @@ def search(query: str = Query("search about smolagents web search agent what it 
     This endpoint searches the web and returns a professional summary.
     """
     task = f"""
-    1. Use a web search to find the most recent and relevant articles on "{query}".
-    2. Identify the top 5 articles that provide insights on the topic.
-    3. For each article, extract the title, publication date, and a brief summary of the key insights.
-    4. Combine all this information into one cohesive, professionally written summary. The summary should integrate all the details (titles, publication dates, and key insights) into a full-text narrative without listing them separately.
-    5. The final output should be a single well-organized paragraph that comprehensively summarizes all the findings in short points with emojis and line breaks.
+    Query: {query}
+
+    1. Identify the Query Type:
+       - If the query requires real-time or updated data (e.g., currency conversion, stock prices, latest news, weather), use a web search.
+       - If the query is factual knowledge (e.g., science facts, historical events, definitions), answer directly if known.
+       - If the query involves complex reasoning, analysis, or calculations, break it down step by step before answering.
+
+    2. For Web-Based Queries:
+       - Search the web and extract the most relevant, up-to-date, and accurate information.
+       - Prioritize trusted sources (official websites, reputable news platforms, government data, etc.).
+       - Summarize findings in a concise and clear format.
+
+    3. For Fact-Based Queries:
+       - If it is a well-known fact, answer directly and accurately.
+       - If fact-checking is needed, compare multiple sources before responding.
+       - Provide clarity and explanations when necessary.
+
+    4. For Analytical or Computational Queries:
+       - Break down the problem logically.
+       - Perform necessary calculations if required.
+       - Explain the reasoning in simple steps.
+
+    5. Format the Output for Readability:
+       - Use short paragraphs, clear points, and structured responses.
+       - Add line breaks and emojis for better readability where appropriate.
+       - Keep responses precise and professional yet easy to understand.
     """
     result = web_agent.run(task)
     return {"result": result}
