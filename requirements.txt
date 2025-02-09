@@ -1,0 +1,4 @@
+smolagents[litellm]
+fastapi
+uvicorn
+smolagents
