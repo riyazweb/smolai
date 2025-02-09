@@ -46,7 +46,7 @@ def search(query: str = Query("search about smolagents web search agent what it 
 
     3. Final Formatting:
        - Structure the output with short paragraphs or points for enhanced readability.if links are available or need to mention, include them.
-       - add emoji to each sentence to make it more engaging and confirmatory and suits the context.
+
     """
     result = web_agent.run(task)
     return {"result": result}
