@@ -5,8 +5,11 @@ import os
 # Initialize FastAPI app
 app = FastAPI()
 
-# Set your Gemini API key (replace with your actual key)
-os.environ["GEMINI_API_KEY"] = "AIzaSyDP4wC7FsIuMhYXpU_sPai-ry4zDW6N_tA"
+# Get the Gemini API key from the environment variable
+gemini_api_key = os.environ.get("GEMINI_API_KEY")
+if gemini_api_key is None:
+    raise EnvironmentError("GEMINI_API_KEY environment variable is not set!")
+
 # Initialize the Gemini model and tools
 model = LiteLLMModel(model_id="gemini/gemini-2.0-flash")
 web_search_tool = DuckDuckGoSearchTool()
