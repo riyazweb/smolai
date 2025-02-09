@@ -5,21 +5,21 @@ import os
 
 app = FastAPI()
 
-# Enable CORS - you can adjust allow_origins to restrict to specific domains
+# Enable CORS - adjust allow_origins as needed for production.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins. Change this for production.
+    allow_origins=["*"],  # Allow all origins. Change for production.
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Get the Gemini API key from the environment variable
+# Retrieve the Gemini API key from the environment variable
 gemini_api_key = os.environ.get("GEMINI_API_KEY")
 if gemini_api_key is None:
     raise EnvironmentError("GEMINI_API_KEY environment variable is not set!")
 
-# Initialize the Gemini model and tools
+# Initialize the Gemini model and web search tool
 model = LiteLLMModel(model_id="gemini/gemini-2.0-flash")
 web_search_tool = DuckDuckGoSearchTool()
 web_agent = CodeAgent(tools=[web_search_tool], model=model)
@@ -27,35 +27,26 @@ web_agent = CodeAgent(tools=[web_search_tool], model=model)
 @app.get("/search")
 def search(query: str = Query("search about smolagents web search agent what it can do", description="Search topic")):
     """
-    This endpoint searches the web and returns a professional summary.
+    This endpoint always:
+      1. Uses a web search to gather the latest and most accurate information.
+      2. Processes the search results using AI.
+      3. Returns a clear, professional summary ending with confirmatory emojis.
     """
     task = f"""
     Query: {query}
 
-    1. Identify the Query Type:
-       - If the query requires real-time or updated data (e.g., currency conversion, stock prices, latest news, weather), use a web search.
-       - If the query is factual knowledge (e.g., science facts, historical events, definitions), answer directly if known.
-       - If the query involves complex reasoning, analysis, or calculations, break it down step by step before answering.
+    1. Web Search:
+       - Regardless of the query type, first perform a web search using the provided tool.
+       - Retrieve the most recent 5 sites, accurate, and relevant information from trusted sources (e.g., official websites, reputable news outlets, government data).
+       - Extract and summarize the key details from these sources.
 
-    2. For Web-Based Queries:
-       - Search the web and extract the most relevant, up-to-date, and accurate information.
-       - Prioritize trusted sources (official websites, reputable news platforms, government data, etc.).
-       - Summarize findings in a concise and clear format.
+    2. AI Processing:
+       - Analyze and process the gathered information to produce a concise and professional summary.
+       - Explain any complex points in a clear and straightforward manner.
 
-    3. For Fact-Based Queries:
-       - If it is a well-known fact, answer directly and accurately.
-       - If fact-checking is needed, compare multiple sources before responding.
-       - Provide clarity and explanations when necessary.
-
-    4. For Analytical or Computational Queries:
-       - Break down the problem logically.
-       - Perform necessary calculations if required.
-       - Explain the reasoning in simple steps.
-
-    5. Format the Output for Readability:
-       - Use short paragraphs, clear points, and structured responses.
-       - Add line breaks and emojis for better readability where appropriate.
-       - Keep responses precise and professional yet easy to understand.
+    3. Final Formatting:
+       - Structure the output with short paragraphs or points for enhanced readability.if links are available or need to mention, include them.
+       - Append a set of confirmatory emojis at the very end (for example, ✅, 🔍, 😊) to indicate completion.
     """
     result = web_agent.run(task)
     return {"result": result}
